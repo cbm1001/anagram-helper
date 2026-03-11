@@ -1,101 +1,152 @@
 import React, { useState } from "react";
+import "./App.css";
+
+const MAX_LETTERS = 14;
+const SVG_SIZE = 340;
+const CENTER = SVG_SIZE / 2;
+const RADIUS = 130;
+const TILE_R = 22;
+
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 export default function App() {
   const [letters, setLetters] = useState("");
-  const [shuffled, setShuffled] = useState([]);
+  const [displayed, setDisplayed] = useState([]);
 
   const handleInputChange = (e) => {
-    const input = e.target.value.toUpperCase().replace(/[^A-Z]/g, "");
+    const input = e.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, MAX_LETTERS);
     setLetters(input);
-    setShuffled(input.split(""));
-  };
-
-  const shuffleArray = (array) => {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
+    setDisplayed(input.split(""));
   };
 
   const handleRandomise = () => {
-    setShuffled(shuffleArray(shuffled));
+    if (displayed.length > 1) {
+      setDisplayed(shuffleArray(displayed));
+    }
   };
 
   const handleClear = () => {
     setLetters("");
-    setShuffled([]);
+    setDisplayed([]);
   };
 
-  const radius = 120;
-  const centerX = 150;
-  const centerY = 150;
-
-  const positions = shuffled.map((letter, index, array) => {
-    const angle = (2 * Math.PI * index) / array.length;
+  const positions = displayed.map((letter, index) => {
+    // Start at top (-π/2) so first letter appears at 12 o'clock
+    const angle = -Math.PI / 2 + (2 * Math.PI * index) / displayed.length;
     return {
       letter,
-      x: centerX + radius * Math.cos(angle),
-      y: centerY + radius * Math.sin(angle),
+      x: CENTER + RADIUS * Math.cos(angle),
+      y: CENTER + RADIUS * Math.sin(angle),
     };
   });
 
   return (
-    <div style={{ textAlign: "center", padding: "30px", fontFamily: "sans-serif" }}>
-      <h2>Anagram Helper</h2>
-      <input
-        type="text"
-        value={letters}
-        onChange={handleInputChange}
-        maxLength={15}
-        placeholder="Enter letters"
-        style={{
-          fontSize: "20px",
-          padding: "10px",
-          width: "300px",
-          border: "2px solid #999",
-          borderRadius: "8px",
-          marginBottom: "20px"
-        }}
-      />
-      <div
-        style={{
-          position: "relative",
-          width: "300px",
-          height: "300px",
-          margin: "30px auto",
-          border: "1px dashed #ccc"
-        }}
-      >
-        {positions.map((pos, i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              left: `${pos.x}px`,
-              top: `${pos.y}px`,
-              transform: "translate(-50%, -50%)",
-              fontSize: "24px",
-              fontWeight: "bold",
-              backgroundColor: "#ffd",
-              padding: "6px 10px",
-              borderRadius: "6px",
-              border: "1px solid #888",
-            }}
+    <div className="app">
+      <header className="app-header">
+        <h1>Anagram Circle</h1>
+        <p className="subtitle">Cryptic crossword anagram helper</p>
+      </header>
+
+      <main className="app-main">
+        <div className="input-row">
+          <input
+            type="text"
+            value={letters}
+            onChange={handleInputChange}
+            maxLength={MAX_LETTERS}
+            placeholder="Type up to 14 letters…"
+            className="letter-input"
+            spellCheck={false}
+            autoComplete="off"
+            autoCapitalize="characters"
+          />
+          <span className="letter-count">{letters.length}/{MAX_LETTERS}</span>
+        </div>
+
+        <div className="circle-container">
+          <svg
+            width={SVG_SIZE}
+            height={SVG_SIZE}
+            viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
+            aria-label="Anagram circle"
           >
-            {pos.letter}
-          </div>
-        ))}
-      </div>
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={handleRandomise} style={{ marginRight: "10px", padding: "10px 20px" }}>
-          Randomise
-        </button>
-        <button onClick={handleClear} style={{ padding: "10px 20px" }}>
-          Clear
-        </button>
-      </div>
+            {/* Guide circle */}
+            <circle
+              cx={CENTER}
+              cy={CENTER}
+              r={RADIUS}
+              fill="none"
+              stroke="#d0c8f0"
+              strokeWidth="1.5"
+              strokeDasharray="6 4"
+            />
+
+            {/* Centre dot */}
+            {displayed.length > 0 && (
+              <circle cx={CENTER} cy={CENTER} r="3" fill="#c0b8e8" />
+            )}
+
+            {/* Letter tiles */}
+            {positions.map((pos, i) => (
+              <g key={i}>
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={TILE_R}
+                  fill="#ffffff"
+                  stroke="#7c6fcf"
+                  strokeWidth="2"
+                  filter="url(#tile-shadow)"
+                />
+                <text
+                  x={pos.x}
+                  y={pos.y}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  className="tile-letter"
+                >
+                  {pos.letter}
+                </text>
+              </g>
+            ))}
+
+            {/* Drop shadow filter */}
+            <defs>
+              <filter id="tile-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="1" dy="2" stdDeviation="2" floodColor="#00000022" />
+              </filter>
+            </defs>
+          </svg>
+
+          {displayed.length === 0 && (
+            <p className="empty-hint">Enter some letters to get started</p>
+          )}
+        </div>
+
+        <div className="button-row">
+          <button
+            className="btn btn-randomise"
+            onClick={handleRandomise}
+            disabled={displayed.length < 2}
+          >
+            ⟳ Randomise
+          </button>
+          <button
+            className="btn btn-clear"
+            onClick={handleClear}
+            disabled={displayed.length === 0}
+          >
+            ✕ Clear
+          </button>
+        </div>
+      </main>
     </div>
   );
 }

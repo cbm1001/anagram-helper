@@ -1,38 +1,162 @@
-.App {
-  text-align: center;
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+body {
+  background: #f4f1ff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   min-height: 100vh;
+}
+
+/* ── Layout ───────────────────────────────────────── */
+.app {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
+  padding: 32px 16px 48px;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #3d2f8f;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: #7c6fcf;
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* ── Input ────────────────────────────────────────── */
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.letter-input {
+  flex: 1;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border: 2.5px solid #b0a4e8;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #2d1f7f;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.letter-input:focus {
+  border-color: #7c6fcf;
+  box-shadow: 0 0 0 3px #7c6fcf28;
+}
+
+.letter-input::placeholder {
+  color: #c0b8e8;
+  font-weight: 400;
+  letter-spacing: 0;
+  font-size: 1rem;
+}
+
+.letter-count {
+  font-size: 0.85rem;
+  color: #9d90d4;
+  white-space: nowrap;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* ── Circle ───────────────────────────────────────── */
+.circle-container {
+  position: relative;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.tile-letter {
+  font-size: 18px;
+  font-weight: 700;
+  fill: #3d2f8f;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  user-select: none;
+  pointer-events: none;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.empty-hint {
+  position: absolute;
+  color: #b0a4e8;
+  font-size: 0.9rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* ── Buttons ──────────────────────────────────────── */
+.button-row {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.btn-randomise {
+  background: #7c6fcf;
+  color: #ffffff;
+  box-shadow: 0 3px 10px #7c6fcf44;
+}
+
+.btn-randomise:hover:not(:disabled) {
+  background: #6a5dc0;
+  box-shadow: 0 4px 14px #7c6fcf66;
+}
+
+.btn-clear {
+  background: #ffffff;
+  color: #7c6fcf;
+  border: 2px solid #b0a4e8;
+}
+
+.btn-clear:hover:not(:disabled) {
+  background: #f4f1ff;
+  border-color: #7c6fcf;
 }
