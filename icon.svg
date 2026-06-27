@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#f5f2ea"/>
+  <circle cx="256" cy="256" r="176" fill="#fffdf8" stroke="#245e57" stroke-width="18" stroke-dasharray="18 20"/>
+  <circle cx="256" cy="256" r="78" fill="#fffdf8" stroke="#d8d1c3" stroke-width="8"/>
+  <g fill="#20242b" font-family="Arial, Helvetica, sans-serif" font-size="70" font-weight="900" text-anchor="middle" dominant-baseline="central">
+    <text x="256" y="82">A</text>
+    <text x="382" y="130">N</text>
+    <text x="430" y="256">A</text>
+    <text x="382" y="382">G</text>
+    <text x="256" y="430">R</text>
+    <text x="130" y="382">A</text>
+    <text x="82" y="256">M</text>
+    <text x="130" y="130">?</text>
+  </g>
+  <text x="256" y="266" fill="#c9452c" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="900" text-anchor="middle" dominant-baseline="central">R</text>
+</svg>
