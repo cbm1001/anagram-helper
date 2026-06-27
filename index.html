@@ -16,14 +16,6 @@
   <body>
     <main class="shell">
       <section class="workspace" aria-label="Anagram solver">
-        <div class="topbar">
-          <div>
-            <p class="eyebrow">Cryptic crossword anagram board</p>
-            <h1>Anagram Ring</h1>
-          </div>
-          <output id="letterCount" class="letter-count" for="letters">0/13</output>
-        </div>
-
         <div class="entry">
           <label for="letters">Letters</label>
           <input
@@ -35,18 +27,25 @@
             spellcheck="false"
             maxlength="13"
             placeholder="ANAGRAM"
-            aria-describedby="inputStatus"
           />
-          <p id="inputStatus" class="status" aria-live="polite">Add up to 13 letters, then shuffle the ring.</p>
         </div>
 
         <div class="actions" aria-label="Ring controls">
           <button id="shuffle" type="button" class="primary">Randomise</button>
-          <button id="rotateLeft" type="button" title="Rotate left" aria-label="Rotate left">↺</button>
-          <button id="rotateRight" type="button" title="Rotate right" aria-label="Rotate right">↻</button>
-          <button id="undo" type="button">Undo</button>
-          <button id="sort" type="button">Sort</button>
           <button id="clear" type="button" class="quiet">Clear</button>
+        </div>
+
+        <div class="scratch">
+          <input
+            id="scratch"
+            type="text"
+            inputmode="latin"
+            autocapitalize="characters"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Tap letters"
+            aria-label="Working notes"
+          />
         </div>
 
         <div class="stage">
@@ -58,11 +57,6 @@
             </div>
             <div id="tiles" class="tiles"></div>
           </div>
-        </div>
-
-        <div class="scratch">
-          <label for="scratch">Working notes</label>
-          <textarea id="scratch" rows="3" placeholder="Click letters in the circle to build a word"></textarea>
         </div>
       </section>
     </main>
