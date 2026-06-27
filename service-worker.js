@@ -1,4 +1,4 @@
-const CACHE_NAME = "anagram-ring-v1";
+const CACHE_NAME = "anagram-ring-v2";
 const ASSETS = [
   "./",
   "./index.html",
