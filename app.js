@@ -1,21 +1,14 @@
 const MAX_LETTERS = 13;
 
 const input = document.querySelector("#letters");
-const letterCount = document.querySelector("#letterCount");
-const status = document.querySelector("#inputStatus");
 const ring = document.querySelector("#ring");
 const tiles = document.querySelector("#tiles");
 const centerWord = document.querySelector("#centerWord");
 const shuffleButton = document.querySelector("#shuffle");
-const rotateLeftButton = document.querySelector("#rotateLeft");
-const rotateRightButton = document.querySelector("#rotateRight");
-const undoButton = document.querySelector("#undo");
-const sortButton = document.querySelector("#sort");
 const clearButton = document.querySelector("#clear");
 const scratch = document.querySelector("#scratch");
 
 let letters = [];
-let undoStack = [];
 let selectedTileIds = [];
 let dragState = null;
 let nextTileId = 1;
@@ -41,23 +34,14 @@ const noteWord = () =>
     .filter(Boolean)
     .join("");
 
-const pushUndo = () => {
-  const current = word();
-  if (!current) return;
-  if (undoStack.at(-1) !== current) {
-    undoStack.push(current);
-    undoStack = undoStack.slice(-24);
-  }
-};
-
 const tileSize = () => {
   const count = Math.max(letters.length, 1);
-  const ringSize = ring.getBoundingClientRect().width || 420;
-  return Math.max(42, Math.min(70, ringSize * (count > 10 ? 0.105 : 0.12)));
+  const ringSize = ring.getBoundingClientRect().width || 360;
+  return Math.max(38, Math.min(66, ringSize * (count > 10 ? 0.105 : 0.12)));
 };
 
 const radius = () => {
-  const ringSize = ring.getBoundingClientRect().width || 420;
+  const ringSize = ring.getBoundingClientRect().width || 360;
   return ringSize * (letters.length > 9 ? 0.38 : 0.36);
 };
 
@@ -71,25 +55,8 @@ const repeatedLetters = () => {
 
 const setControls = () => {
   const hasLetters = letters.length > 0;
-  const canMove = letters.length > 1;
-  shuffleButton.disabled = !canMove;
-  rotateLeftButton.disabled = !canMove;
-  rotateRightButton.disabled = !canMove;
-  sortButton.disabled = !canMove;
+  shuffleButton.disabled = letters.length < 2;
   clearButton.disabled = !hasLetters;
-  undoButton.disabled = undoStack.length === 0;
-};
-
-const renderStatus = () => {
-  letterCount.textContent = `${letters.length}/${MAX_LETTERS}`;
-  centerWord.textContent = letters.length ? word() : "ANAGRAM";
-  if (letters.length === 0) {
-    status.textContent = "Add up to 13 letters, then shuffle the ring.";
-  } else if (letters.length === MAX_LETTERS) {
-    status.textContent = "Maximum reached.";
-  } else {
-    status.textContent = `${MAX_LETTERS - letters.length} spaces left.`;
-  }
 };
 
 const syncScratch = () => {
@@ -135,8 +102,8 @@ const renderTiles = () => {
 const render = () => {
   selectedTileIds = selectedTileIds.filter((id) => letters.some((tile) => tile.id === id));
   input.value = word();
+  centerWord.textContent = letters.length ? word() : "ANAGRAM";
   syncScratch();
-  renderStatus();
   renderTiles();
   setControls();
 };
@@ -152,7 +119,6 @@ const shuffle = () => {
 
 const randomise = () => {
   if (letters.length < 2) return;
-  pushUndo();
   const before = word();
   let next = shuffle();
   let attempts = 0;
@@ -161,24 +127,6 @@ const randomise = () => {
     attempts += 1;
   }
   letters = next;
-  render();
-};
-
-const rotate = (direction) => {
-  if (letters.length < 2) return;
-  pushUndo();
-  if (direction < 0) {
-    letters.push(letters.shift());
-  } else {
-    letters.unshift(letters.pop());
-  }
-  render();
-};
-
-const sortLetters = () => {
-  if (letters.length < 2) return;
-  pushUndo();
-  letters = [...letters].sort((a, b) => a.letter.localeCompare(b.letter));
   render();
 };
 
@@ -191,15 +139,8 @@ const applyInput = () => {
   render();
 };
 
-const restoreArrangement = (arrangement) => {
-  letters = arrangement.split("").map(createTile);
-  selectedTileIds = [];
-  render();
-};
-
 const reorder = (fromIndex, toIndex) => {
   if (fromIndex === toIndex || toIndex < 0 || toIndex >= letters.length) return;
-  pushUndo();
   const next = [...letters];
   const [moved] = next.splice(fromIndex, 1);
   next.splice(toIndex, 0, moved);
@@ -306,17 +247,8 @@ function handleTileKeydown(event) {
 
 input.addEventListener("input", applyInput);
 shuffleButton.addEventListener("click", randomise);
-rotateLeftButton.addEventListener("click", () => rotate(-1));
-rotateRightButton.addEventListener("click", () => rotate(1));
-sortButton.addEventListener("click", sortLetters);
-
-undoButton.addEventListener("click", () => {
-  const previous = undoStack.pop();
-  if (previous) restoreArrangement(previous);
-});
 
 clearButton.addEventListener("click", () => {
-  if (letters.length) pushUndo();
   letters = [];
   selectedTileIds = [];
   render();
@@ -329,7 +261,7 @@ scratch.addEventListener("input", () => {
 
 window.addEventListener("keydown", (event) => {
   if (event.metaKey || event.ctrlKey || event.altKey) return;
-  if (event.target === input || event.target.tagName === "TEXTAREA") return;
+  if (event.target === input || event.target === scratch) return;
 
   if (event.key === " " || event.key.toLowerCase() === "r") {
     event.preventDefault();
