@@ -1,100 +1,121 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import "./App.css";
+
+const MAX_LETTERS = 15;
+
+const sanitizeInput = (value) => value.toUpperCase().replace(/[^A-Z]/g, "");
+
+const shuffleLetters = (letters) => {
+  const arr = [...letters];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
 
 export default function App() {
-  const [letters, setLetters] = useState("");
-  const [shuffled, setShuffled] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const [shuffledLetters, setShuffledLetters] = useState([]);
 
-  const handleInputChange = (e) => {
-    const input = e.target.value.toUpperCase().replace(/[^A-Z]/g, "");
-    setLetters(input);
-    setShuffled(input.split(""));
-  };
-
-  const shuffleArray = (array) => {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
+  const handleInputChange = (event) => {
+    const cleaned = sanitizeInput(event.target.value).slice(0, MAX_LETTERS);
+    setInputValue(cleaned);
+    setShuffledLetters(shuffleLetters(cleaned.split("")));
   };
 
   const handleRandomise = () => {
-    setShuffled(shuffleArray(shuffled));
+    setShuffledLetters((current) => {
+      const source = current.length ? current : inputValue.split("");
+      return shuffleLetters(source);
+    });
   };
 
   const handleClear = () => {
-    setLetters("");
-    setShuffled([]);
+    setInputValue("");
+    setShuffledLetters([]);
   };
 
-  const radius = 120;
-  const centerX = 150;
-  const centerY = 150;
+  const positions = useMemo(() => {
+    if (!shuffledLetters.length) return [];
 
-  const positions = shuffled.map((letter, index, array) => {
-    const angle = (2 * Math.PI * index) / array.length;
-    return {
-      letter,
-      x: centerX + radius * Math.cos(angle),
-      y: centerY + radius * Math.sin(angle),
-    };
-  });
+    const radius = 135;
+    const center = 175;
+
+    return shuffledLetters.map((letter, index) => {
+      const angle = (2 * Math.PI * index) / shuffledLetters.length - Math.PI / 2;
+      return {
+        letter,
+        x: center + radius * Math.cos(angle),
+        y: center + radius * Math.sin(angle),
+      };
+    });
+  }, [shuffledLetters]);
 
   return (
-    <div style={{ textAlign: "center", padding: "30px", fontFamily: "sans-serif" }}>
-      <h2>Anagram Helper</h2>
-      <input
-        type="text"
-        value={letters}
-        onChange={handleInputChange}
-        maxLength={15}
-        placeholder="Enter letters"
-        style={{
-          fontSize: "20px",
-          padding: "10px",
-          width: "300px",
-          border: "2px solid #999",
-          borderRadius: "8px",
-          marginBottom: "20px"
-        }}
-      />
-      <div
-        style={{
-          position: "relative",
-          width: "300px",
-          height: "300px",
-          margin: "30px auto",
-          border: "1px dashed #ccc"
-        }}
-      >
-        {positions.map((pos, i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              left: `${pos.x}px`,
-              top: `${pos.y}px`,
-              transform: "translate(-50%, -50%)",
-              fontSize: "24px",
-              fontWeight: "bold",
-              backgroundColor: "#ffd",
-              padding: "6px 10px",
-              borderRadius: "6px",
-              border: "1px solid #888",
-            }}
-          >
-            {pos.letter}
+    <div className="app-shell">
+      <div className="card">
+        <header className="card__header">
+          <p className="eyebrow">Crossword utility</p>
+          <h1>Anagram Ring Helper</h1>
+          <p className="lede">
+            Enter up to 15 letters, then shuffle them into a circular layout to
+            spark new word ideas.
+          </p>
+        </header>
+
+        <label className="field" htmlFor="letters-input">
+          <div className="field__top">
+            <span className="label">Letters</span>
+            <span className="counter">{inputValue.length}/{MAX_LETTERS}</span>
           </div>
-        ))}
-      </div>
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={handleRandomise} style={{ marginRight: "10px", padding: "10px 20px" }}>
-          Randomise
-        </button>
-        <button onClick={handleClear} style={{ padding: "10px 20px" }}>
-          Clear
-        </button>
+          <input
+            id="letters-input"
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            maxLength={MAX_LETTERS}
+            placeholder="Example: anagramwizard"
+            className="text-input"
+            spellCheck="false"
+          />
+        </label>
+
+        <div className="actions">
+          <button
+            type="button"
+            className="button"
+            onClick={handleRandomise}
+            disabled={!inputValue}
+          >
+            Randomise letters
+          </button>
+          <button
+            type="button"
+            className="button button--ghost"
+            onClick={handleClear}
+            disabled={!inputValue && !shuffledLetters.length}
+          >
+            Clear
+          </button>
+        </div>
+
+        <div className="ring" aria-live="polite">
+          {positions.length === 0 && (
+            <p className="ring__placeholder">
+              Type some letters to see them swirl around the ring.
+            </p>
+          )}
+          {positions.map((pos, index) => (
+            <span
+              key={`${pos.letter}-${index}`}
+              className="ring__letter"
+              style={{ left: pos.x, top: pos.y }}
+            >
+              {pos.letter}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );

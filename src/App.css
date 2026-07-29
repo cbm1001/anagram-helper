@@ -1,38 +1,194 @@
-.App {
-  text-align: center;
+:root {
+  --bg: #0b1021;
+  --card: #11172f;
+  --accent: #5dd5ff;
+  --accent-strong: #82ffe2;
+  --text: #e8ecff;
+  --muted: #a6b2d7;
+  --border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+  margin: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at 20% 20%, #182241, #0b1021 45%),
+    radial-gradient(circle at 80% 0%, rgba(93, 213, 255, 0.25), transparent 35%),
+    radial-gradient(circle at 70% 90%, rgba(130, 255, 226, 0.16), transparent 40%),
+    #0b1021;
+  color: var(--text);
 }
 
-.App-header {
-  background-color: #282c34;
+.app-shell {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 48px 16px 64px;
 }
 
-.App-link {
-  color: #61dafb;
+.card {
+  width: min(720px, 100%);
+  background: linear-gradient(135deg, rgba(130, 255, 226, 0.08), rgba(93, 213, 255, 0.05))
+      border-box,
+    var(--card) border-box;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 32px 32px 40px;
+  box-shadow: var(--shadow);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.card__header {
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.field {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.field__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.label {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.counter {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+}
+
+.text-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: rgba(93, 213, 255, 0.6);
+  box-shadow: 0 0 0 4px rgba(93, 213, 255, 0.18);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 12px 0 26px;
+}
+
+.button {
+  appearance: none;
+  border: 1px solid rgba(130, 255, 226, 0.35);
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(93, 213, 255, 0.15), rgba(130, 255, 226, 0.22));
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  border-color: rgba(130, 255, 226, 0.6);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.button--ghost {
+  background: transparent;
+  border-color: var(--border);
+}
+
+.ring {
+  position: relative;
+  margin: 0 auto;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.02), transparent 60%);
+  overflow: hidden;
+}
+
+.ring__placeholder {
+  margin: 0;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  text-align: center;
+  padding: 0 32px;
+}
+
+.ring__letter {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(130, 255, 226, 0.16);
+  border: 1px solid rgba(93, 213, 255, 0.35);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+  transform: translate(-50%, -50%);
+}
+
+@media (max-width: 720px) {
+  .card {
+    padding: 24px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .ring {
+    width: 300px;
+    height: 300px;
   }
 }
